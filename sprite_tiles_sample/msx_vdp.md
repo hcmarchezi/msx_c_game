@@ -18,7 +18,7 @@
 |---------------|---------------|---------------|-------------|--------------|---------------|
 | 0x000 - 0x7FF | 0x1800:0x1AFF |0x1B00:0x1B7F  |0x1B80:0x1BAF|0x2000:0x37FF | 0x3800-0x3FFF | 
 
-
+ref: https://konamiman.github.io/MSX2-Technical-Handbook/md/Appendix5.html
 
 
 
