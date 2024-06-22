@@ -1,33 +1,38 @@
 #include "screen_1_tiling.h"
 
+void screen_1_fill_with_chars( //32x24 chars
+	const unsigned char* chars, 
+	void (*vdp_vwrite)(void*, unsigned int, unsigned int)) {
+		vdp_vwrite((void*)chars, 0x1800, 764); // 32x24 = 768
+} 
 
-void screen_1_set_tile_patterns(unsigned int pattern_start, unsigned int pattern_end, unsigned char* tile_patterns, int (*vpoke)(int, int)) {
-	int tile_idx = 0;
-	for (int mem = pattern_start * 8; mem < (pattern_end+1) * 8; mem++) {
-		vpoke(mem, tile_patterns[tile_idx]);
-		tile_idx++;
-	}	
+void screen_1_set_ascii_patterns(
+	unsigned char ascii_start, unsigned char ascii_count, const unsigned char* patterns, 
+	void (*vdp_vwrite)(void*, unsigned int, unsigned int)) {
+    	unsigned int mem_start = (unsigned int)ascii_start * 8;
+    	unsigned int mem_count = (unsigned int)ascii_count * 8;
+    	vdp_vwrite((void*)patterns, mem_start, mem_count);
 }
 
-void screen_1_set_tile_colors(int pattern_group, unsigned int foreground_color, unsigned int background_color, int (*vpoke)(int, int)) {
-	int mem = 8192 + pattern_group;
-	int color = (int)foreground_color * 16 + (int)background_color;
-	vpoke(mem, color);
+void screen_1_set_ascii_block_color(
+	unsigned char ascii_group, unsigned char foreground_color, unsigned char background_color,
+	void (*vdp_vwrite)(void*, unsigned int, unsigned int)) {
+    	unsigned int mem_start = 0x2000 + ascii_group;
+    	unsigned char color = foreground_color * 16 + background_color;
+    	vdp_vwrite((void*)&color, mem_start, 1);
 }
 
-void screen_1_write_screen_tiles_int(const int* ascii, int (*vpoke)(int, int)) { // 32x24 ascii code characters
-	int ascii_index = 0;
-	for (int mem = 0x1800; mem <=0x1AFF; mem++) {
-		vpoke(mem, ascii[ascii_index]);
-		ascii_index++;
-	}
-}
 
-void screen_1_write_screen_tiles_char(const unsigned char* tiles, int (*vpoke)(int, int)) { // 32x24 characters
-	int tile_idx = 0;
-	for (int mem = 0x1800; mem <=0x1AFF; mem++) {
-		vpoke(mem, (int)tiles[tile_idx]);
-		tile_idx++;
-	}
-}
+
+
+
+
+
+
+
+
+
+
+
+
 

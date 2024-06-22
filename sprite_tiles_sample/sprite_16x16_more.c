@@ -1,4 +1,4 @@
-#include<msx/gfx.h>
+#include<msx.h>
 #include<stdio.h>
 
 /* SPRITES */
@@ -125,7 +125,7 @@ u_char tiles[] = {
 void print_tiles() {
     u_int vdp_addr = 6144; // until 6911 (6144 + 768)
     for (u_int tile_index = 0; tile_index < 768; tile_index++) {
-        vpoke(vdp_addr + tile_index, tiles[tile_index]);
+        msx_vpoke(vdp_addr + tile_index, tiles[tile_index]);
     }
 }
 
@@ -133,11 +133,10 @@ void print_tiles() {
 
 void define_tiles(u_char init_pattern_code, u_char pattern_count, u_char* pattern) {
     uint vdp_addr = 0x0; // screen 1
-    
     uint addr = vdp_addr + init_pattern_code * 8;
 
     for (u_char index=0; index < 8 * pattern_count; index++) {
-        vpoke(addr + index, pattern[index]);
+        msx_vpoke(addr + index, pattern[index]);
     }
 }
 
@@ -151,7 +150,7 @@ void set_tile_colors() {
 
     u_int index = 0;
     for (u_int addr = 0x200C; addr <= 0x2011; addr++) {
-        vpoke(addr, tile_colors[index]);
+        msx_vpoke(addr, tile_colors[index]);
         index++;
     }
 }
@@ -170,13 +169,10 @@ int trajectory_len = 120;
 
 void main() {
 
-    
-
-
     // set graphic screen
-    set_color(15, 1, 1);
-    set_mode(mode_1);
-    set_sprite_mode(sprite_large);
+    msx_color(15, 1, 5);
+    msx_set_mode(1);
+    msx_set_sprite_mode(sprite_large);
 
     define_tiles(0x60, 16, big_planet);
     define_tiles(0x70, 8, saturn_planet);
@@ -187,11 +183,11 @@ void main() {
     set_tile_colors();
     print_tiles();
 
-    set_sprite_16(0, player_ship);
-    set_sprite_16(1, enemy_ship1);
-    set_sprite_16(2, enemy_ship2);
-    set_sprite_16(3, star_ship);
-   
+    msx_set_sprite_16(0, player_ship);
+    msx_set_sprite_16(1, enemy_ship1);
+    msx_set_sprite_16(2, enemy_ship2);
+    msx_set_sprite_16(3, star_ship);
+
     u_int x = 128;
     u_int y = 170;
 
@@ -209,8 +205,8 @@ void main() {
     u_int x5 = 140;
     u_int x6 = 160; u_int y6 = 40;
 
-    while (!get_trigger(0)) {
-        int stick = get_stick(0);
+    while (!msx_get_trigger(0)) {
+        int stick = msx_get_stick(0);
 
         if (stick == 3) {
             x = x + 1;
@@ -228,13 +224,13 @@ void main() {
 
         y6 = y6 + trajectory[index3];
 
-        put_sprite_16(1, x1, 20, 1, 10);
-        put_sprite_16(2, x2, 40, 2, 11);
-        put_sprite_16(3, x3, 60, 3, 12);
+        msx_put_sprite_16(1, x1, 20, 1, 10);
+        msx_put_sprite_16(2, x2, 40, 2, 11);
+        msx_put_sprite_16(3, x3, 60, 3, 12);
 
-        put_sprite_16(4, x4, 80, 1, 13);
-        put_sprite_16(5, x5, 100, 2, 14);
-        put_sprite_16(6, x6, 120, 3, 2);
+        msx_put_sprite_16(4, x4, 80, 1, 13);
+        msx_put_sprite_16(5, x5, 100, 2, 14);
+        msx_put_sprite_16(6, x6, 120, 3, 2);
 
         index1++; if (index1 > trajectory_len) { index1 = 0; }
         index2++; if (index2 > trajectory_len) { index2 = 0; }
@@ -243,6 +239,6 @@ void main() {
         index5++; if (index5 > trajectory_len) { index5 = 0; }
         index6++; if (index6 > trajectory_len) { index6 = 0; }
 
-        put_sprite_16(0, x, y, 0, 15);
+        msx_put_sprite_16(0, x, y, 0, 15);
     }
  }

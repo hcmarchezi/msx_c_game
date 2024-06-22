@@ -21,4 +21,20 @@ int vpoke_func(int mem, int val) {
 	vpoke_idx++;	
 }
 
+void* vpoke_vwrite_data;
+unsigned int vpoke_vwrite_mem_start;
+unsigned int vpoke_vwrite_mem_count;
+
+void init_vpoke_vwrite_func() {
+	vpoke_vwrite_data = 0;
+	vpoke_vwrite_mem_start = 0;
+	vpoke_vwrite_mem_count = 0;
+}
+
+void vpoke_vwrite_func(void* data, unsigned int mem_start, unsigned int mem_count) {
+	vpoke_vwrite_data = data;
+	vpoke_vwrite_mem_start = mem_start;
+	vpoke_vwrite_mem_count = mem_count;
+}
+
 #endif
