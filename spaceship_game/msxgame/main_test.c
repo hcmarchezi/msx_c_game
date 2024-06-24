@@ -12,6 +12,7 @@
 #include "test_msx_psg_helper.h"
 #include "test_game_sprite_collision.h"
 #include "test_game_sprite_explosion.h"
+#include "test_ship_sequence.h"
 
 
 int main(int argc, char** argv) {
@@ -65,6 +66,10 @@ int main(int argc, char** argv) {
 
     printf("game_sprite_explosion_test: ");
     MU_RUN_SUITE(game_sprite_explosion_test_suite);
+    printf("\n");
+
+    printf("ship_sequence_test_suite: ");
+    MU_RUN_SUITE(ship_sequence_test_suite);
     printf("\n");
 
 	MU_REPORT();

@@ -1,0 +1,41 @@
+stage = {
+   enemies = [
+    0: sprite_struct(id, 40, -20, pattern, color),
+    1: sprite_struct(id, 200, -40, pattern, color),
+    . . . .
+    30: sprite_struct(id, 130, -450, pattern, color), 
+  ]
+  background_tiles = [0x0, 0x10, 0x25, . . . . . ] // 32x24 bytes
+  background_music = [
+    0: ‘CCCCCCCCFFFFFFFFGGGGGGGGAAAAAAAA’,
+    1: ‘EEEEEEFGFFFFFFEFGGGGGGFEAAAAAAAA’
+  ]
+}
+
+
+for stage in stages:
+
+  music_process(stage.background_music, stage.psg_tones)
+  background_tiles_display(stage.background)
+
+  while enemies_last_y(stage.enemies) < 200:
+    enemies_display(stage.enemies)
+    
+    stick = get_stick(0)
+    player_move(stick, stage.player)
+   
+    if get_trigger(0) and shoot_available(stage.shoot):
+      shoot_start_from_player(stage.player, stage.shoot)
+
+    enemies_move(stage.enemies) // inc y, update x
+    enemies_update_pattern(stage.enemies) // explosion animation
+
+    if shoot_in_movement(stage.shoot):
+      shoot_move(stage.shoot)
+
+    collision_shoot_enemy(&stage.enemies_indices, stage.enemies, stage.shoot)
+    enemies_mark_destroyed(stage.enemies_indices, stage.enemies)    
+    
+    music_play_tones(stage.psg_tones)
+  
+    
