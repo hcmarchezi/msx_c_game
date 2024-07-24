@@ -27,6 +27,19 @@ void init_game_sprite(
 	sprite->explosion_count = explosion_count;
 }
 
+
+game_sprite* new_game_sprite(
+		unsigned int sprite_id, int x, int y, unsigned int color, unsigned int sprite_pattern, 
+		int velocity, unsigned int* explosion_pattern, unsigned char explosion_count) {
+	game_sprite* sprite = (game_sprite*)malloc(sizeof(game_sprite));
+	init_game_sprite(
+		sprite,
+		sprite_id, x, y, color, sprite_pattern, 
+		velocity, explosion_pattern, explosion_count);
+	return sprite;
+}
+
+
 void game_sprite_move(game_sprite* ship, unsigned int stick) {
 	if (stick == 8 || stick == 1 || stick == 2) {
 		ship->y -= ship->velocity;

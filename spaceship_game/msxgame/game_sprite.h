@@ -16,11 +16,14 @@ typedef struct {
 
 } game_sprite;
 
-
 void define_sprite_pattern(int sprite_pattern_id, const char* sprite_pattern, int (*vpoke)(int, int));
 
 void init_game_sprite(
 	game_sprite* sprite,
+	unsigned int sprite_id, int x, int y, unsigned int color, unsigned int sprite_pattern, 
+	int velocity, unsigned int* explosion_pattern, unsigned char explosion_count);
+
+game_sprite* new_game_sprite(
 	unsigned int sprite_id, int x, int y, unsigned int color, unsigned int sprite_pattern, 
 	int velocity, unsigned int* explosion_pattern, unsigned char explosion_count);
 

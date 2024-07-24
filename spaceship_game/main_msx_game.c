@@ -9,12 +9,16 @@
 
 #include "data/sprites.h"
 #include "data/tiles.h"
+#include "data/game_title.h"
+
 #include "msxgame/game_sprite.h"
 #include "msxgame/music_tones.h"
 #include "msxgame/screen_1_tiling.h"
 #include "msxgame/msx_psg_helper.h"
 #include "msxgame/game_sprite_collision.h"
 #include "msxgame/ship_sequence.h"
+
+#include "game/ship_sequence.h"
 
 
 game_sprite player;
@@ -27,6 +31,13 @@ unsigned int note_count = 32;
 unsigned int channel_0_tones[32];
 unsigned int channel_1_tones[32];
 
+void game_ship_movement_init() {
+  build_seq_func_1(&move_sequence_1, 128);
+  build_seq_func_2(&move_sequence_2, 128);
+  build_seq_func_3(&move_sequence_3, 128);
+  build_seq_func_zero(&move_sequence_zero, 128);
+}
+
 void initialize_psg_channels() {
 	set_psg(8, 16);
 	set_psg(9, 16);
@@ -34,183 +45,6 @@ void initialize_psg_channels() {
 	set_psg(12, 0x13);
 	set_psg(13, 0);
 }
-
-void build_ship_sequence(
-      game_sprite* sprite_seq, unsigned char count, 
-      unsigned int color, unsigned int sprite_pattern,
-      unsigned int x_step, int* y_seq, unsigned int* explosion_patterns, unsigned char explosion_count) {
-  int x = 0;
-  for(unsigned int index=0; index < count; index++) {
-    x = x + x_step;
-    init_game_sprite(
-      &sprite_seq[index], index+10, x, y_seq[index], color, sprite_pattern, 1, explosion_patterns, explosion_count);
-  }
-}
-
-void build_ship_seq_idx(int* seq_seq_idx, unsigned char count, unsigned int idx_step) {
-  int seq_idx = 0;
-  for(unsigned int index=0; index < count; index++) {
-    seq_seq_idx[index] = seq_idx;
-    seq_idx = seq_idx + idx_step;
-  }
-}
-
-void build_seq_func_1(int* num_seq, unsigned char count) {
-  unsigned char pivot = count / 2;
-  for (unsigned char index=0; index < pivot; index++) {
-    num_seq[index] = 1;
-    num_seq[index + pivot] = -1;
-  }
-}
-
-void build_seq_func_2(int* num_seq, unsigned char count) {
-  unsigned char pivot = count / 4;
-  for (unsigned char index=0; index < pivot; index++) {
-    num_seq[index] = 0;
-    num_seq[index + pivot] = -1;
-    num_seq[index + 2 * pivot] = 0;
-    num_seq[index + 3 * pivot] = -1;
-  }
-}
-
-void build_seq_func_3(int* num_seq, unsigned char count) {
-  float cos_seq[] = {3.0, 2.94, 2.76, 2.49, 2.1, 1.65, 1.14, 0.57, 0.0, -0.57, -1.14, -1.65, -2.1, -2.49, -2.76, -2.94, -3.0};
-  unsigned char idx = 0;
-  float step = 17.0 / count;
-  float cos_idx = 0.0;
-  while (idx < 17) {
-    num_seq[idx] = cos_seq[(int)cos_idx];
-    idx = idx + 1;
-    cos_idx = cos_idx + step;
-  }
-}
-
-void build_seq_func_zero(int* num_seq, unsigned char count) {
-  for (unsigned char index=0; index < count; index++) {
-    num_seq[index] = 0;
-  }
-}
-
-///////////////////// enemy ship sequences ///////////////////////
-
-unsigned char explosion_patterns[] = {10, 11, 12, 13, 12, 11, 10};
-unsigned char explosion_pattern_count = 7;
-
-int seq1_move[128];
-int seq2_move[128];
-int seq3_move[128];
-int seq4_move[128];
-
-void init_move_seqs() {
-  build_seq_func_1(&seq1_move, 128);
-  build_seq_func_2(&seq2_move, 128);
-  build_seq_func_3(&seq3_move, 128);
-  build_seq_func_zero(&seq4_move, 128);
-}
-
-///////////////////// seq1 //////////////////////////
-
-unsigned char seq1_ship_count = 3;
-game_sprite seq1_ships[3];
-int seq1_x_seq_idx[3]; 
-int seq1_y_seq_idx[3];
-
-void init_enemy_ship_seq_1(ship_sequence * seq) {
-  int y_seq[] = { -30, -10, 10 };
-  build_ship_sequence(
-    &seq1_ships, 3, 12, 1,
-    64, &y_seq, explosion_patterns, explosion_pattern_count);
-
-  unsigned char seq1_count = 128;
-
-  build_ship_seq_idx(&seq1_x_seq_idx, 3, 5);
-  build_ship_seq_idx(&seq1_y_seq_idx, 3, 5);
-
-  init_ship_sequence(seq, &seq1_ships, seq1_ship_count, &seq1_move, &seq2_move, seq1_count, &seq1_x_seq_idx, &seq1_y_seq_idx);
-}
-
-///////////////////// seq2 //////////////////////////
-
-unsigned char seq2_ship_count = 5;
-game_sprite seq2_ships[5];
-int seq2_x_seq_idx[5]; 
-int seq2_y_seq_idx[5];
-
-void init_enemy_ship_seq_2(ship_sequence * seq) {
-  int y_seq[] = { -50, -40, -30, -20, -16 };
-  build_ship_sequence(
-    &seq2_ships, 5, 13, 3,
-    50, &y_seq, explosion_patterns, explosion_pattern_count);
-
-  unsigned char seq2_count = 128;
-  build_ship_seq_idx(&seq2_x_seq_idx, 5, 5);
-  build_ship_seq_idx(&seq2_y_seq_idx, 5, 5);
-
-  init_ship_sequence(seq, &seq2_ships, seq2_ship_count, &seq3_move, &seq2_move, seq2_count, &seq2_x_seq_idx, &seq2_y_seq_idx);
-}
-
-///////////////////// seq3 //////////////////////////
-
-unsigned char seq3_ship_count = 4;
-game_sprite seq3_ships[4];
-int seq3_x_seq_idx[4]; 
-int seq3_y_seq_idx[4];
-
-void init_enemy_ship_seq_3(ship_sequence * seq) {
-  int y_seq[] = { -50, -40, -30, -20, -16 };
-  build_ship_sequence(
-    &seq3_ships, 4, 8, 4,
-    60, &y_seq, explosion_patterns, explosion_pattern_count);
-
-  unsigned char seq3_count = 128;
-  build_ship_seq_idx(&seq3_x_seq_idx, 4, 5);
-  build_ship_seq_idx(&seq3_y_seq_idx, 4, 5);
-
-  init_ship_sequence(seq, &seq3_ships, seq3_ship_count, &seq2_move, &seq4_move, seq3_count, &seq3_x_seq_idx, &seq3_y_seq_idx);
-}
-
-
-///////////////////// seq4 //////////////////////////
-
-unsigned char seq4_ship_count = 3;
-game_sprite seq4_ships[3];
-int seq4_x_seq_idx[3]; 
-int seq4_y_seq_idx[3];
-
-void init_enemy_ship_seq_4(ship_sequence * seq) {
-  int y_seq[] = { -40, -35, -30 };
-  build_ship_sequence(&seq4_ships, 3, 5, 1,
-    70, &y_seq, explosion_patterns, explosion_pattern_count);
-
-  build_ship_seq_idx(&seq4_x_seq_idx, 3, 5);
-  build_ship_seq_idx(&seq4_y_seq_idx, 3, 5);
-
-
-  unsigned char seq4_count = 128;
-  
-  init_ship_sequence(seq, &seq4_ships, seq4_ship_count, &seq3_move, &seq2_move, seq4_count, &seq4_x_seq_idx, &seq4_y_seq_idx);
-}
-
-///////////////////// seq5 //////////////////////////
-
-unsigned char seq5_ship_count = 6;
-game_sprite seq5_ships[6];
-int seq5_x_seq_idx[6]; 
-int seq5_y_seq_idx[6];
-
-void init_enemy_ship_seq_5(ship_sequence * seq) {
-  int y_seq[] = {-40, -35, -30, -25, -20, -15};
-  build_ship_sequence(&seq5_ships, 6, 13, 5,
-    40, &y_seq, explosion_patterns, explosion_pattern_count);
-
-  build_ship_seq_idx(&seq5_x_seq_idx, 6, 10);
-  build_ship_seq_idx(&seq5_y_seq_idx, 6, 10);
-
-  unsigned char seq5_count = 128;  
-  init_ship_sequence(seq, &seq5_ships, seq5_ship_count, &seq3_move, &seq3_move, seq5_count, &seq5_x_seq_idx, &seq5_y_seq_idx);
-}
-
-
 
 ///////////////////////////////////// main program ///////////
 
@@ -240,30 +74,49 @@ void main() {
     screen_1_set_ascii_patterns(0x14, 4, moon_pattern, vdp_vwrite);
     screen_1_set_ascii_patterns(0x18, 4, stars_pattern, vdp_vwrite);
 
+    screen_1_set_ascii_patterns(0x80, 64, game_title_tile_patterns, vdp_vwrite);
+
     ////////////////// ASCII PATTERN COLORS ///////////////////
 
     screen_1_set_ascii_block_color(2,  4, 1, vdp_vwrite);
-    screen_1_set_ascii_block_color(3,  15, 1, vdp_vwrite);    
+    screen_1_set_ascii_block_color(3,  15, 1, vdp_vwrite);
+
+    screen_1_set_ascii_block_color(16, 4, 1, vdp_vwrite);
+    screen_1_set_ascii_block_color(17, 4, 1, vdp_vwrite);
+    screen_1_set_ascii_block_color(18, 5, 1, vdp_vwrite);
+    screen_1_set_ascii_block_color(19, 5, 1, vdp_vwrite);
+    screen_1_set_ascii_block_color(20, 7, 1, vdp_vwrite);
+    screen_1_set_ascii_block_color(21, 7, 1, vdp_vwrite);
+    screen_1_set_ascii_block_color(22, 15, 1, vdp_vwrite);
+    screen_1_set_ascii_block_color(23, 15, 1, vdp_vwrite);
+
+    ////////////////// WRITE GAME TITLE TILES /////////////////
+
+    screen_1_fill_with_chars(game_title_chars, vdp_vwrite);
+    while (!get_trigger(0));
 
     ////////////////// WRITE SCREEN 1 TILES ///////////////////
 
     screen_1_fill_with_chars(screen_1_tiles_with_stars_and_planet, vdp_vwrite); 
     
-    /////////////////// SETUP ENEMY SHIP SEQUENCE /////////////   
-    ship_sequence sequences[5];
-    init_move_seqs();
-    init_enemy_ship_seq_1(&sequences[0]);
-    init_enemy_ship_seq_2(&sequences[1]);
-    init_enemy_ship_seq_3(&sequences[2]);
-    init_enemy_ship_seq_4(&sequences[3]);
-    init_enemy_ship_seq_5(&sequences[4]);
-    
-    unsigned char sequence_idx = 0;
-    unsigned char sequence_count = 5;
 
-    int scene_finished[] = {0, 0};
-    unsigned char scene_idx = 0;
+    /////////////////// SETUP ENEMY SHIP SEQUENCE /////////////   
+
+    game_ship_movement_init();
+
+    ship_sequence sequences[2];
+    new_ship_sequence_1(&sequences[0]);
+    new_ship_sequence_2(&sequences[1]);
+    new_ship_sequence_3(&sequences[2]);
+    new_ship_sequence_4(&sequences[3]);
+    unsigned char sequence_idx = 0;
+    unsigned char sequence_count = 4;
+
     ///////////////////////////////////////////////////////////
+
+    int player_score = 0;
+    screen_1_init_score(vdp_vwrite);
+    screen_1_print_score(player_score, vdp_vwrite);
 
     init_game_sprite(&player, 0, 128, 170, 15, 0, 1, explosion_patterns, explosion_pattern_count);
     init_game_sprite(&player_shoot, 2, -20, -20, 6, 2, 1, explosion_patterns, explosion_pattern_count);
@@ -283,7 +136,9 @@ void main() {
     	game_sprite_display(&player, vdp_put_sprite_16);
     	game_sprite_display(&player_shoot, vdp_put_sprite_16);
 
-      ship_sequence_run(&sequences[sequence_idx], vdp_put_sprite_16);
+
+      ship_sequence_run(sequences[sequence_idx], vdp_put_sprite_16);
+
 
     	if (get_trigger(0) && player_shoot.y == -20) {
     		set_psg(10, 15);
@@ -314,11 +169,15 @@ void main() {
     		end_t = clock();
     	}
 
-      ship_sequence_collision(&player_shoot, &sequences[sequence_idx], vdp_put_sprite_16);
-
+      unsigned char result = ship_sequence_collision(&player_shoot, &sequences[sequence_idx], vdp_put_sprite_16);
+      if (result == 'Y') {
+        player_score += 10;
+        screen_1_print_score(player_score, vdp_vwrite);
+      }
       int end_of_sequence = sequences[sequence_idx].end_of_sequence;
       if ((sequence_idx < sequence_count - 1)&&(end_of_sequence == 1)) {
         sequence_idx++;
       }
+
     }
 }

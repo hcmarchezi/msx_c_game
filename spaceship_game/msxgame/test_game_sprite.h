@@ -4,7 +4,7 @@
 #include "game_sprite.h"
 
 
-unsigned int* test_explosion_pattern[] = { 10, 11, 12, 13, 12, 11, 10 };
+unsigned int test_explosion_pattern[] = { 10, 11, 12, 13, 12, 11, 10 };
 
 
 game_sprite create_test_game_sprite(int x, int y) {
