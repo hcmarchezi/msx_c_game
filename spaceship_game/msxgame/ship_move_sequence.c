@@ -20,7 +20,7 @@ void build_seq_func_2(int* num_seq, unsigned char count) {
   unsigned char pivot = count / 4;
   for (unsigned char index=0; index < pivot; index++) {
     num_seq[index] = 0;
-    num_seq[index + pivot] = -1;
+    num_seq[index + pivot] = 1;
     num_seq[index + 2 * pivot] = 0;
     num_seq[index + 3 * pivot] = -1;
   }

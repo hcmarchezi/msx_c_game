@@ -1,24 +1,15 @@
 #ifndef GAME_STAGE_H
 #define GAME_STAGE_H
 
-#include "game_sprite.h"
+#include "music_tones.h"
+#include "ship_sequence.h"
 
 typedef struct {
-
-  game_sprite* enemies;
-  unsigned int enemy_count;
-
-  unsigned char* tiles;
-  unsigned int tile_count;
-  
-  unsigned char* channel_0_music_notes;
-  unsigned char* channel_1_music_notes;
-  unsigned int music_note_count;
-
+	unsigned char* stage_name;
+	unsigned int stage_name_count;
+	music_tones sound_track;
+	ship_sequence sequence;
+	unsigned char* background;
 } game_stage;
-
-game_stage* game_stage_new(unsigned int enemy_count, unsigned int tile_count, unsigned int music_note_count);
-
-void game_stage_free(game_stage* stage);
 
 #endif

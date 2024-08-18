@@ -9,23 +9,35 @@
 game_sprite ship_sequence_1_sprite_1;
 game_sprite ship_sequence_1_sprite_2;
 game_sprite ship_sequence_1_sprite_3;
+game_sprite ship_sequence_1_sprite_4;
+game_sprite ship_sequence_1_sprite_5;
+game_sprite ship_sequence_1_sprite_6;
 
 void new_ship_sequence_1(ship_sequence* seq) {  
-  create_ship_sprite_1(&ship_sequence_1_sprite_1, 10,  50, -40, 12);
-  create_ship_sprite_1(&ship_sequence_1_sprite_2, 11, 150, -30, 13);
-  create_ship_sprite_1(&ship_sequence_1_sprite_3, 12, 200, -20, 12);
+  create_ship_sprite_1(&ship_sequence_1_sprite_1, 10,  40, 40, 12);
+  create_ship_sprite_1(&ship_sequence_1_sprite_2, 11,  80, 30, 13);
+  create_ship_sprite_1(&ship_sequence_1_sprite_3, 12, 120, 20, 12);
+  create_ship_sprite_1(&ship_sequence_1_sprite_4, 13, 160, 40, 12);
+  create_ship_sprite_1(&ship_sequence_1_sprite_5, 14, 200, 30, 13);
+  create_ship_sprite_1(&ship_sequence_1_sprite_6, 15, 230, 20, 12);
 
   seq->ships[0] = &ship_sequence_1_sprite_1;
   seq->ships[1] = &ship_sequence_1_sprite_2;
   seq->ships[2] = &ship_sequence_1_sprite_3;
+  seq->ships[3] = &ship_sequence_1_sprite_4;
+  seq->ships[4] = &ship_sequence_1_sprite_5;
+  seq->ships[5] = &ship_sequence_1_sprite_6;
 
-  seq->x_seq_idx[0] = 10; seq->x_seq_idx[1] = 20; seq->x_seq_idx[2] = 30;
+  seq->x_seq_idx[0] = 20; seq->x_seq_idx[1] = 40; seq->x_seq_idx[2] = 60;
+  seq->x_seq_idx[3] = 80; seq->x_seq_idx[4] = 100; seq->x_seq_idx[5] = 120;
+
   seq->y_seq_idx[0] = 40; seq->y_seq_idx[1] = 50; seq->y_seq_idx[2] = 60;
+  seq->y_seq_idx[3] = 80; seq->y_seq_idx[4] = 100; seq->y_seq_idx[5] = 120;
 
-  seq->ship_count = 3;
+  seq->ship_count = 6;
 
   seq->x_seq = move_sequence_1;
-  seq->y_seq = move_sequence_2;
+  seq->y_seq = move_sequence_1;
 
   seq->seq_count = 128;
 
@@ -39,11 +51,11 @@ game_sprite ship_sequence_2_sprite_4;
 game_sprite ship_sequence_2_sprite_5;
 
 void new_ship_sequence_2(ship_sequence* seq) {
-  create_ship_sprite_2(&ship_sequence_2_sprite_1, 10,   0, -40, 10);
-  create_ship_sprite_2(&ship_sequence_2_sprite_2, 11,  50, -35, 12);
-  create_ship_sprite_2(&ship_sequence_2_sprite_3, 12, 100, -30, 10);
-  create_ship_sprite_2(&ship_sequence_2_sprite_4, 13, 150, -25, 12);
-  create_ship_sprite_2(&ship_sequence_2_sprite_5, 14, 200, -20, 10);
+  create_ship_sprite_2(&ship_sequence_2_sprite_1, 10,   0, 40, 10);
+  create_ship_sprite_2(&ship_sequence_2_sprite_2, 11,  50, 35, 12);
+  create_ship_sprite_2(&ship_sequence_2_sprite_3, 12, 100, 30, 10);
+  create_ship_sprite_2(&ship_sequence_2_sprite_4, 13, 150, 25, 12);
+  create_ship_sprite_2(&ship_sequence_2_sprite_5, 14, 200, 20, 10);
 
   seq->ships[0] = &ship_sequence_2_sprite_1;
   seq->ships[1] = &ship_sequence_2_sprite_2;

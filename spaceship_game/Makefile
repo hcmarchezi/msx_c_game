@@ -6,7 +6,9 @@ CFILES = \
 		msxgame/screen_1_tiling.c \
 		msxgame/game_sprite_collision.c \
 		msxgame/ship_sequence.c \
-		msxgame/ship_move_sequence.c 
+		msxgame/ship_move_sequence.c \
+		msxgame/game_background.c 
+
 
 OBJFILES = $(CFILES:.c=.o)
 

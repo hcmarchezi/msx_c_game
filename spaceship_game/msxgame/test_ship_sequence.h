@@ -14,21 +14,26 @@ game_sprite ship_sequence_create_test_game_sprite(
 }
 
 MU_TEST(test_ship_sequence_init) {
-	int x_seq_idx[] = { 0, 1, 2};
-	int y_seq_idx[] = {10, 11, 12};
 	int x_seq[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
 	int y_seq[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+
+	int x_seq_idx[] = { 0,  1,  2};
+	int y_seq_idx[] = {10, 11, 12};
 
 	ship_sequence seq;
 	
 	seq.ships[0] = new_game_sprite(0, 120, -50, 12, 1, 1, 0, 0);
 	seq.ships[1] = new_game_sprite(1,  80, -30, 12, 1, 1, 0, 0);
 	seq.ships[2] = new_game_sprite(2, 180, -40, 12, 1, 1, 0, 0);
-	seq.x_seq_idx = x_seq_idx;
-	seq.y_seq_idx = y_seq_idx;
 	seq.ship_count = 3;
-	seq.x_seq = x_seq;
-	seq.y_seq = y_seq;
+	for (int index=0; index < seq.ship_count; index++) {
+		seq.x_seq_idx[index] = x_seq_idx[index]; 
+		seq.y_seq_idx[index] = y_seq_idx[index]; 
+	}
+
+	seq.seq_count = 10;
+	seq.x_seq = &x_seq;
+	seq.y_seq = &y_seq;
 	mu_assert_int_eq(3, seq.ship_count);
 
 	mu_assert_int_eq(seq.ships[0]->sprite_id, 0);
@@ -58,7 +63,7 @@ MU_TEST(test_ship_sequence_init) {
 	}
 
 	for (int idx=0; idx < seq.ship_count; idx++) {
-		mu_assert_int_eq(idx, seq.x_seq_idx[idx]);
+		mu_assert_int_eq(idx,      seq.x_seq_idx[idx]);
 		mu_assert_int_eq(idx + 10, seq.y_seq_idx[idx]);
 	}
 }
@@ -75,8 +80,10 @@ MU_TEST(test_ship_sequence_update_position) {
 	seq.ships[0] = new_game_sprite(0, 120, -50, 12, 1, 1, 0, 0);
 	seq.ships[1] = new_game_sprite(1,  80, -30, 12, 1, 1, 0, 0);
 	seq.ships[2] = new_game_sprite(2, 180, -40, 12, 1, 1, 0, 0);
-	seq.x_seq_idx = x_seq_idx;
-	seq.y_seq_idx = y_seq_idx;
+	for (int index=0; index < seq.ship_count; index++) {
+		seq.x_seq_idx[index] = x_seq_idx[index];
+		seq.y_seq_idx[index] = y_seq_idx[index];
+	}
 	seq.seq_count = 5;
 	seq.x_seq = x_seq;
 	seq.y_seq = y_seq;
@@ -131,9 +138,12 @@ MU_TEST(test_ship_sequence_display) {
 	seq.ships[0] = new_game_sprite(0, 120, -50, 12, 1, 1, 0, 0);
 	seq.ships[1] = new_game_sprite(1,  80, -30, 12, 1, 1, 0, 0);
 	seq.ships[2] = new_game_sprite(2, 180, -40, 12, 1, 1, 0, 0);
-	seq.x_seq_idx = x_seq_idx;
-	seq.y_seq_idx = y_seq_idx;
 	seq.ship_count = 3;
+	for(int index=0; index < seq.ship_count; index++) {
+		seq.x_seq_idx[index] = x_seq_idx[index];
+		seq.y_seq_idx[index] = y_seq_idx[index];
+	}
+	
 
 	seq.x_seq = x_seq;
 	seq.y_seq = y_seq;
@@ -157,9 +167,9 @@ MU_TEST(test_ship_sequence_display) {
 	mu_assert_int_eq(fake_sprite_x[1], 80);
 	mu_assert_int_eq(fake_sprite_x[2], 180);
 
-	mu_assert_int_eq(fake_sprite_y[0], -49);
-	mu_assert_int_eq(fake_sprite_y[1], -29);
-	mu_assert_int_eq(fake_sprite_y[2], -39);
+	mu_assert_int_eq(fake_sprite_y[0], -50);
+	mu_assert_int_eq(fake_sprite_y[1], -30);
+	mu_assert_int_eq(fake_sprite_y[2], -40);
 }
 
 MU_TEST_SUITE(ship_sequence_test_suite) {

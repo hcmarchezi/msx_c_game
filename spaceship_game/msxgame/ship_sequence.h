@@ -17,7 +17,6 @@ typedef struct {
 
 } ship_sequence;
 
-
 void ship_sequence_update_position(ship_sequence* seq);
 
 void ship_sequence_display(
@@ -26,11 +25,11 @@ void ship_sequence_display(
 
 void ship_sequence_run(
     ship_sequence* seq,
-    void (*ptr_put_sprite_16)(unsigned int, int, int, unsigned int, unsigned int) );
+    void (*ptr_put_sprite_16)(unsigned int, int, int, unsigned int, unsigned int));
 
 unsigned char ship_sequence_collision(
     game_sprite* target,
     ship_sequence* seq,
-    void (*ptr_put_sprite_16)(unsigned int, int, int, unsigned int, unsigned int) );
+    void (*ptr_put_sprite_16)(unsigned int, int, int, unsigned int, unsigned int));
 
 #endif

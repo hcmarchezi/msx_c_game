@@ -34,7 +34,6 @@ void ship_sequence_display(
   unsigned char ship_display_count = 0;
   for (unsigned char idx=0; idx < seq->ship_count; idx++) {
     if (seq->ships[idx]->y < 200) {
-      game_sprite_move(seq->ships[idx], 5);
       game_sprite_display(seq->ships[idx], ptr_put_sprite_16);
       ship_display_count++;
     }
