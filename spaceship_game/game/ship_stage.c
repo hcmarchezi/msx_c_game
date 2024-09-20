@@ -21,3 +21,12 @@ void create_ship_stage_2(game_stage* stage) {
 	stage->background = stage_2_char_tiles;
 	create_music_track_2(&stage->sound_track);
 }
+
+unsigned char* stage_3_name = "STAGE 3 ASTEROIDS";
+void create_ship_stage_3(game_stage* stage) {
+	stage->stage_name = stage_3_name;
+	stage->stage_name_count = 17;
+	new_ship_sequence_3(&stage->sequence);
+	stage->background = stage_3_char_tiles;
+	create_music_track_3(&stage->sound_track);
+}

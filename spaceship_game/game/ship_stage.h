@@ -7,5 +7,6 @@ void create_ship_stage_1(game_stage* stage);
 
 void create_ship_stage_2(game_stage* stage);
 
+void create_ship_stage_3(game_stage* stage);
 
 #endif

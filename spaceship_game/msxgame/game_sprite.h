@@ -13,6 +13,7 @@ typedef struct {
     unsigned int* explosion_pattern;
     unsigned char explosion_idx;
     unsigned char explosion_count;
+    unsigned char* explosion_sound_tones;
 
 } game_sprite;
 

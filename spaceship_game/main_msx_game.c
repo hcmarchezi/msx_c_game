@@ -79,26 +79,24 @@ void main() {
     screen_1_set_ascii_patterns(0x18, 4, stars_pattern, vdp_vwrite);
     screen_1_set_ascii_patterns(0x1C, 4, commet_pattern, vdp_vwrite);
 
-    screen_1_set_ascii_patterns(0x20, 16, asteroid_pattern, vdp_vwrite); // 16 bytes
-
-    // 0x30 - 0x5F -> visible characters - not to be replaced (unless by better fonts)
+    // 0x20 - 0x5F -> visible characters - not to be replaced (unless by better fonts)
 
     screen_1_set_ascii_patterns(0x60, 16, spaceship_pattern, vdp_vwrite); // 16 bytes
-    // screen_1_set_ascii_patterns(0x70, ..., ....); // 16 bytes
+    screen_1_set_ascii_patterns(0x70, 16, asteroid_pattern, vdp_vwrite); // 16 bytes
+    screen_1_set_ascii_patterns(0x80, 64, game_title_tile_patterns, vdp_vwrite); // 64 bytes - 0x80 - 0xBF
+
     // screen_1_set_ascii_patterns(0xC0, ..., ....); // 16 bytes
     // screen_1_set_ascii_patterns(0xD0, ..., ....); // 16 bytes
     // screen_1_set_ascii_patterns(0xE0, ..., ....); // 16 bytes
     // screen_1_set_ascii_patterns(0xF0, ..., ....); // 16 bytes
-
-    screen_1_set_ascii_patterns(0x80, 64, game_title_tile_patterns, vdp_vwrite);
 
     ////////////////// ASCII PATTERN COLORS ///////////////////
 
     screen_1_set_ascii_block_color(2,  4, 1, vdp_vwrite);  // planet / moon pattern
     screen_1_set_ascii_block_color(3,  15, 1, vdp_vwrite); // stars / comment pattern
 
-    screen_1_set_ascii_block_color(4,  9, 1, vdp_vwrite); // asteroid part 1
-    screen_1_set_ascii_block_color(5,  9, 1, vdp_vwrite); // asteroid part 2
+    screen_1_set_ascii_block_color(14,  9, 1, vdp_vwrite); // asteroid part 1
+    screen_1_set_ascii_block_color(15,  9, 1, vdp_vwrite); // asteroid part 2
 
     screen_1_set_ascii_block_color(16, 4, 1, vdp_vwrite);  ////////////////////
     screen_1_set_ascii_block_color(17, 4, 1, vdp_vwrite);  //  
@@ -111,12 +109,13 @@ void main() {
 
     ////////////////// GAME SEQUENCE /////////////////////////////////////////
 
-    game_stage stages[2];
+    game_stage stages[3];
     create_ship_stage_1(stages[0]);
     create_ship_stage_2(stages[1]);
+    create_ship_stage_3(stages[2]);
 
     unsigned char sequence_idx = 0;
-    unsigned char sequence_count = 2;
+    unsigned char sequence_count = 3;
 
     ////////////////// WRITE GAME TITLE TILES /////////////////
 
@@ -136,19 +135,24 @@ void main() {
     init_game_sprite(&player, 0, 128, 170, 15, 0, 1, explosion_patterns, explosion_pattern_count);
     init_game_sprite(&player_shoot, 2, -20, -20, 6, 2, 1, explosion_patterns, explosion_pattern_count);
 
+    unsigned char explosion_sound_tones[] = { 0x60, 0x40, 0x20, 0x10, 0x20, 0x40, 0x60 };
+
     //////////////////////// STAGE LOOP /////////////////////////////
     while(sequence_idx < sequence_count) {
 
       screen_1_clear(vdp_vwrite);
       screen_1_printf(
-        stages[sequence_idx].stage_name, stages[sequence_idx].stage_name_count, 
-        5, 10, vdp_vwrite);
+        stages[sequence_idx].stage_name, 
+        stages[sequence_idx].stage_name_count, 
+        5, 10, 
+        vdp_vwrite);
       wait_for(120);
 
       ////////////////// WRITE SCREEN 1 TILES ///////////////////
       screen_1_fill_with_chars(stages[sequence_idx].background, vdp_vwrite); 
 
       ///////////////////////////////////////////////////////////
+
       clock_t start_t = clock();
       clock_t end_t = clock();
 
@@ -159,7 +163,24 @@ void main() {
       	game_sprite_display(&player, vdp_put_sprite_16);
       	game_sprite_display(&player_shoot, vdp_put_sprite_16);
 
-        ship_sequence_run(stages[sequence_idx].sequence, vdp_put_sprite_16); ///////////////////////////
+        ship_sequence_run(stages[sequence_idx].sequence, vdp_put_sprite_16); 
+
+
+        ////////////////////////////////////////////////////////////////////////////
+
+        int any_explosion = 0;
+        for (int index=0; index < stages[sequence_idx].sequence.ship_count; index++) {
+          if (stages[sequence_idx].sequence.ships[index]->status == 'E') {
+            set_psg(10, 15);
+            unsigned char explosion_idx = stages[sequence_idx].sequence.ships[index]->explosion_idx;
+            set_psg(4, explosion_sound_tones[ explosion_idx ]);
+            set_psg(5, 0x1);
+            any_explosion = 1;
+          }
+        }
+
+        ////////////////////////////////////////////////////////////////////////////
+
 
       	if (get_trigger(0) && player_shoot.y == -20) {
       		set_psg(10, 15);
@@ -169,8 +190,13 @@ void main() {
 
       	player_shoot.y -= 5;
 
+
+        if ((player_shoot.y < -20)&&(any_explosion == 0)) { 
+          set_psg(10, 0);
+        }
+
+
       	if (player_shoot.y < -20) {
-      		set_psg(10, 0);
       		player_shoot.y = -20;
       	} else {
       		set_psg(4, player_shoot.y + 51);

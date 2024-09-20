@@ -29,12 +29,14 @@ void build_seq_func_2(int* num_seq, unsigned char count) {
 void build_seq_func_3(int* num_seq, unsigned char count) {
   float cos_seq[] = {3.0, 2.94, 2.76, 2.49, 2.1, 1.65, 1.14, 0.57, 0.0, -0.57, -1.14, -1.65, -2.1, -2.49, -2.76, -2.94, -3.0};
   unsigned char idx = 0;
-  float step = 17.0 / count;
-  float cos_idx = 0.0;
+  //float step = 17.0 / count;
+  int cos_idx = 0;
   while (idx < 17) {
-    num_seq[idx] = cos_seq[(int)cos_idx];
+    num_seq[idx] = cos_seq[cos_idx];
     idx = idx + 1;
-    cos_idx = cos_idx + step;
+    //cos_idx = cos_idx + step;
+    cos_idx += 1; 
+    if (cos_idx > 16) cos_idx = 0;
   }
 }
 

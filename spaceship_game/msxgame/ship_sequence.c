@@ -67,7 +67,7 @@ unsigned char ship_sequence_collision(
           game_sprite_set_explosion_mode(seq->ships[idx]);
 
           target->x = -20;
-          target->y = -20;
+          target->y = -40;
           game_sprite_display(seq->ships[idx], ptr_put_sprite_16);
 
           return 'Y';
